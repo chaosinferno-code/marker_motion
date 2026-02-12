@@ -73,12 +73,13 @@ class _MarkerMotionTimerState extends State<MarkerMotionTimer> {
       return;
     }
 
+    final newMarkersById = <MarkerId, Marker>{
+      for (final marker in widget.markers) marker.markerId: marker,
+    };
+
     _animatedMarkers.clear();
     for (final oldMarker in _displayMarkers) {
-      final newMarker = widget.markers.cast<Marker?>().firstWhere(
-        (m) => m?.markerId == oldMarker.markerId,
-        orElse: () => null,
-      );
+      final newMarker = newMarkersById[oldMarker.markerId];
       if (newMarker == null || oldMarker.position == newMarker.position) {
         continue;
       }
@@ -104,8 +105,9 @@ class _MarkerMotionTimerState extends State<MarkerMotionTimer> {
     _timer?.cancel();
     _timerProgress = 0.0;
 
-    final stepCount =
+    final rawStepCount =
         (widget.duration.inMilliseconds / (1000 / widget.frameRate)).round();
+    final stepCount = rawStepCount > 0 ? rawStepCount : 1;
     final stepSize = 1.0 / stepCount;
 
     _timer = Timer.periodic(
@@ -136,14 +138,9 @@ class _MarkerMotionTimerState extends State<MarkerMotionTimer> {
     }
 
     for (final animatedMarker in _animatedMarkers.values) {
-      final position =
-          (_timerProgress >= 1.0)
-              ? animatedMarker.end
-              : animatedMarker.lerp(_timerProgress);
-
-      debugPrint(
-        'Marker: ${animatedMarker.marker.markerId}, t: $_timerProgress, Position: $position',
-      );
+      final position = (_timerProgress >= 1.0)
+          ? animatedMarker.end
+          : animatedMarker.lerp(_timerProgress);
 
       updatedMarkers.add(
         animatedMarker.marker.copyWith(positionParam: position),

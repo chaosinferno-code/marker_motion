@@ -107,12 +107,13 @@ class _MarkerMotionAnimationState extends State<MarkerMotionAnimation>
     }
 
     // Identify markers that need animation by comparing old and new positions
+    final newMarkersById = <MarkerId, Marker>{
+      for (final marker in widget.markers) marker.markerId: marker,
+    };
+
     _animatedMarkers.clear();
     for (final oldMarker in _displayMarkers) {
-      final newMarker = widget.markers.cast<Marker?>().firstWhere(
-        (m) => m?.markerId == oldMarker.markerId,
-        orElse: () => null,
-      );
+      final newMarker = newMarkersById[oldMarker.markerId];
 
       // Skip markers that were removed or haven’t changed position
       if (newMarker == null || oldMarker.position == newMarker.position) {

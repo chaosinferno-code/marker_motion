@@ -69,6 +69,7 @@ class MarkerMotion extends StatelessWidget {
           markers: markers,
           builder: builder,
           duration: config.duration,
+          frameRate: config.frameRate,
         );
     }
   }
