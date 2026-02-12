@@ -534,9 +534,7 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('duplicate marker ids do not crash ($label)', (
-        tester,
-      ) async {
+      testWidgets('duplicate marker ids do not crash ($label)', (tester) async {
         final initial = {_marker('1', 0, 0)};
         final duplicates = <Marker>{_marker('1', 10, 0), _marker('1', 20, 0)};
 
